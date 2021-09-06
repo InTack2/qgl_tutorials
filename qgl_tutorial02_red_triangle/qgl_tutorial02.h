@@ -1,28 +1,25 @@
 #ifndef QGL_TUTORIAL02_H
 #define QGL_TUTORIAL02_H
 
-#include <QOpenGLWidget>
-#include <QOpenGLShaderProgram>
 #include <QOpenGLFunctions>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLWidget>
 
-class Tutorial02 : public QOpenGLWidget, protected QOpenGLFunctions
-{
-  public:
-    Tutorial02( QWidget *parent=0 );
-    ~Tutorial02();
+class Tutorial02 : public QOpenGLWidget, protected QOpenGLFunctions {
+ public:
+  explicit Tutorial02(QWidget* parent = 0);
+  ~Tutorial02() override;
 
-  protected:
-    void initializeGL(void);
-    void resizeGL( int w, int h );
-    void paintGL();
-    void keyPressEvent( QKeyEvent *e);
+ protected:
+  void initializeGL() override;
+  void resizeGL(int w, int h) override;
+  void paintGL() override;
+  void keyPressEvent(QKeyEvent* e) override;
 
-  private:
-    QOpenGLShaderProgram shaderProgram;
-    GLuint vertexPosition_modelspaceID;
-    GLuint vertexbuffer;
+ private:
+  QOpenGLShaderProgram shaderProgram;
+  GLuint m_vertexPosition_modelspaceID;
+  GLuint m_vertexbuffer;
 };
 
-
-#endif // QGL_TUTORIAL02_H
-
+#endif  // QGL_TUTORIAL02_H
