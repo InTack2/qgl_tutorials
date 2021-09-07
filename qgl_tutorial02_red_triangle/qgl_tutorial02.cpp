@@ -38,9 +38,9 @@ void Tutorial02::initializeGL() {
 
   // シェーダー読み込み
   // https://doc.qt.io/qt-5/qopenglshaderprogram.html#details
-  shaderProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/SimpleVertexShader.vert");
-  shaderProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/SimpleFragmentShader.frag");
-  shaderProgram.link();
+  m_shaderProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/SimpleVertexShader.vert");
+  m_shaderProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/SimpleFragmentShader.frag");
+  m_shaderProgram.link();
 
   // バッファ関連
   glGenBuffers(1, &m_vertexbuffer);
@@ -48,40 +48,51 @@ void Tutorial02::initializeGL() {
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
   // GL_STATIC_DRAWは使用され方を指定
 
-  GLuint programID = shaderProgram.programId();
+  GLuint programID = m_shaderProgram.programId();
 
   // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetAttribLocation.xhtml
   // 指定したアトリビュートの位置を取得する？今回はmodelspaceの頂点位置か
   m_vertexPosition_modelspaceID = glGetAttribLocation(programID, "vertexPosition_modelspace");
-
-  glClearColor(0.0f, 0.0f, 0.3f, 0.0f);
+  glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 }
 
 void Tutorial02::paintGL() {
+  // glClear プリセットの値にリセット。なぜ。
+  // GL_COLOR_BUFFER_BIT カラー書き込み有効のバッファ
+  // GL_DEPTH_BUFFER_BIT デプスバッファ
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  shaderProgram.bind();
+  m_shaderProgram.bind();
 
-  GLuint programID = shaderProgram.programId();
+  GLuint programID = m_shaderProgram.programId();
 
-  // Use our shader
+  // シェーダーのインストール？
+  // 消しても特にエラーなし
+  // Programが0の場合未定義らしいので奇跡的にうまくいってる？
+  // http://docs.gl/gl4/glUseProgram
   glUseProgram(programID);
 
   // 1rst attribute buffer : vertices
-  glEnableVertexAttribArray(0);
+  // Vertexのアトリビュート配列を無効。
+  // TODO: trueにして動かす
+  // http://docs.gl/gl4/glEnableVertexAttribArray
+  glEnableVertexAttribArray(false);
+
+  // 頂点アトリビュートにバインド
+  // 現状だとバインドしなくても動く
+  // http://docs.gl/gl4/glBindBuffer
   glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
   glVertexAttribPointer(m_vertexPosition_modelspaceID,  // The attribute we want to configure
                         3,                              // size
-                        GL_FLAT,                        // type
+                        GL_FLOAT,                       // type
                         GL_FALSE,                       // normalized?
                         0,                              // stride
                         (void*)0                        // array buffer offset
   );
-
-  // Draw the triangle !
+  // 描画する
   glDrawArrays(GL_TRIANGLES, 0, 3);  // Starting from vertex 0; 3 vertices total -> 1 triangle
 
-  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(false);
 }
 
 void Tutorial02::resizeGL(int w, int h) {

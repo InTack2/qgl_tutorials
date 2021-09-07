@@ -17,7 +17,8 @@ class Tutorial02 : public QOpenGLWidget, protected QOpenGLFunctions {
   void keyPressEvent(QKeyEvent* e) override;
 
  private:
-  QOpenGLShaderProgram shaderProgram;
+  // https://doc.qt.io/qt-5/qopenglshaderprogram.html
+  QOpenGLShaderProgram m_shaderProgram;
   GLuint m_vertexPosition_modelspaceID;
   GLuint m_vertexbuffer;
 };
